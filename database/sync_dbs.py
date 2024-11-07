@@ -1,5 +1,5 @@
-from .crud import add_user
-from .database import session_scope
+from .async_crud import set_user
+from .async_database import session_scope
 from .redis_cache import get_all_cached_users, clear_cache
 
 def sync_redis_to_db():
@@ -7,7 +7,7 @@ def sync_redis_to_db():
     with session_scope() as session:
         for user_data in cached_users:
             # Transform the data into the required format and add it to the database
-            add_user(
+            set_user(
                 session=session,
                 user_id=user_data['telegram_id'],
                 username=user_data['username'],
@@ -16,5 +16,5 @@ def sync_redis_to_db():
             )
     clear_cache()  # Clear cache after move data to database
 
-def sync_db_request_to_sync():
+def sync_request_to_redis():
     ...

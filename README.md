@@ -1,3 +1,10 @@
+pip install -r requirements.txt
+
+ngrok.exe http http://localhost:8080
+
+Paste ngrok forwarding URL into .env
+
+
 https://github.com/I1Kuz/predlojka_aiogram/blob/main/main.py
 https://github.com/pylounge/pylounge-webhook-tg-bot/blob/main/bot.py
 https://github.com/pylounge/pylounge-webhook-tg-bot/blob/main/bot.py

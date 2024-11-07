@@ -23,5 +23,5 @@ def session_scope():
     finally:
         session.close()
 
-if __name__ == '__main__':
-    Base.metadata.create_all(engine)
+
+

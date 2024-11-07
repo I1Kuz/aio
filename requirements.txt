@@ -1,0 +1,6 @@
+aiogram
+fastapi[standard]
+redis
+sqlalchemy
+APScheduler
+captcha

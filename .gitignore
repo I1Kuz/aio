@@ -3,3 +3,4 @@
 
 # Ignore environment files
 *.env
+*.pyc

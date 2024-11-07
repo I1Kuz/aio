@@ -1,8 +1,8 @@
 from aiogram import BaseMiddleware, types, Bot
 from aiogram.types import BufferedInputFile
 
-from database.crud import is_captcha_solved
-from database.database import session_scope
+from database.async_crud import is_captcha_solved
+from database.sync_database import session_scope
 from services.captcha import gen_captcha, captcha_storage
 
 

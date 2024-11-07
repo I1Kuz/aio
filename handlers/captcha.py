@@ -1,6 +1,6 @@
 from aiogram import Router, types
-from database.database import session_scope
-from database.crud import set_captcha_status
+from database.sync_database import session_scope
+from database.async_crud import set_captcha_status
 from services.captcha import captcha_storage
 
 captcha_router = Router(name=__name__)
