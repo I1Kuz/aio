@@ -38,7 +38,7 @@ async def handle_webhook(request: Request):
 
 
 async def on_startup():
-    #start_scheduler()
+    start_scheduler()
     await init_db()
     await redis_ping()
     await set_webhook()

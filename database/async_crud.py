@@ -9,7 +9,7 @@ async def _add_user(session: AsyncSession, user_id: int, **user_data):
         user_id=user_id, **user_data
     )
     session.add(new_user)
-    
+
 
 async def _update_user(session: AsyncSession, user_id: int, **user_data):
     """Update an existing user with new values for the fields provided in kwargs."""
@@ -29,6 +29,7 @@ async def is_user_exists(session:AsyncSession, user_id: int):
     user_exists = user_exists.scalar()
 
     return bool(user_exists)
+
 
 async def set_user(session: AsyncSession, user_id: int, **user_data):
     """Check if the user exists. If they do, update their information. Otherwise, add them."""

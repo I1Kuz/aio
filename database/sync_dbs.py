@@ -1,20 +1,17 @@
 from .async_crud import set_user
 from .async_database import session_scope
-from .redis_cache import get_all_cached_users, clear_cache
+from .redis_cache import get_all_users, delete_user_from_cache
+from datetime import datetime
 
-def sync_redis_to_db():
-    cached_users = get_all_cached_users()
-    with session_scope() as session:
-        for user_data in cached_users:
-            # Transform the data into the required format and add it to the database
-            set_user(
-                session=session,
-                user_id=user_data['telegram_id'],
-                username=user_data['username'],
-                is_banned=user_data.get('is_banned', False),
-                chat_id=user_data['chat_id']
-            )
-    clear_cache()  # Clear cache after move data to database
+async def sync_redis_to_db():
+    cached_users = await get_all_users()
+    async with session_scope() as session:
+        for user in cached_users:
 
-def sync_request_to_redis():
-    ...
+            user['last_seen'] = datetime.fromisoformat(user['last_seen'])
+            
+            # Move the user data to the database
+            await set_user(session=session, **user)
+            
+            # Remove user from Redis cache after saving to the database
+            await delete_user_from_cache(user_id=user["user_id"])
