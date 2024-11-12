@@ -56,7 +56,13 @@ async def register_handler(message: types.Message):
 
 @user_router.message(Command('play'))
 async def play_handler(message: types.Message):
-    
+    message.answer_game()
+# 1. Создание игры в BotFather
+# Откройте BotFather в Telegram.
+# Отправьте команду /newgame, чтобы зарегистрировать новую игру.
+# Укажите название игры и её короткое имя (short name), которое будет использоваться в URL.
+# BotFather попросит ссылку на игру (например, https://example.com/mygame). Это должна быть веб-страница с HTML5-игрой, размещённая на HTTPS-сервере.
+# После настройки BotFather предоставит вам параметры для использования игры с вашим ботом.
 @user_router.message(Command("help"))
 async def user_help_handler(message: types.Message):
     await message.answer(USER_HELP_TEXT)
