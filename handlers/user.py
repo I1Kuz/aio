@@ -45,6 +45,7 @@ async def command_start_handler(message: types.Message) -> None:
     await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
     print(await get_all_users())
 
+@user_router.message(Command('register'))
     
 @user_router.message(Command("help"))
 async def user_help_handler(message: types.Message):

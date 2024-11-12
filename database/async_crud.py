@@ -30,9 +30,8 @@ async def is_user_exists(session: AsyncSession, user_id: int):
     user_exists = await session.execute(
         select(exists().where(TelegramUser.user_id == user_id))
     )
-    user_exists = user_exists.scalar()
 
-    return bool(user_exists)
+    return bool(user_exists.scalar())
 
 
 async def delete_user(session: AsyncSession, user_id: int):

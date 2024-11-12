@@ -2,7 +2,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from .sync_dbs import sync_redis_to_db  
 
 async def run_async_job():
-    await sync_redis_to_db()  
+    await sync_redis_to_db()
 
 def start_scheduler():
     scheduler = AsyncIOScheduler()
