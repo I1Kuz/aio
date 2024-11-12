@@ -2,7 +2,7 @@ from aiogram import Router, types, html
 from aiogram.filters import Command, CommandStart
 from database.async_crud import set_user
 from database.async_database import session_scope
-from database.redis_cache import cache_user_data, get_all_users
+from database.redis_cache import cache_user, get_all_users
 
 USER_HELP_TEXT = """    /help - памаги
                                  /top - пасмотреть топ prekolistov 
@@ -40,7 +40,7 @@ async def command_start_handler(message: types.Message) -> None:
     #     await set_user(session, **data)
 
     data = get_user_data(message)
-    await cache_user_data(**data)
+    await cache_user(**data)
 
     await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
     print(await get_all_users())
