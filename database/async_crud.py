@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, exists, delete, update
 from sqlalchemy.exc import NoResultFound, IntegrityError
 from .models import TelegramUser
-from ..services.share_utils import utcnow_without_microsec
+from services.share_utils import utcnow_without_microsec
 
 async def add_user(session: AsyncSession, user_id: int, **user_data): # use set_user instead 
     """Add a new user to the database if they don't already exist."""
@@ -38,6 +38,7 @@ async def delete_user(session: AsyncSession, user_id: int):
 
 async def ban_user(session: AsyncSession, user_id: int):
     """Ban a user by setting the banned_at field."""
+    print(f"banned: {user_id}")
     await session.execute(update(TelegramUser).where(TelegramUser.user_id == user_id).values(banned_at=utcnow_without_microsec()))
 
 async def set_user(session: AsyncSession, user_id: int, **user_data):

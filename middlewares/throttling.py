@@ -5,6 +5,8 @@ from aiogram.types import Message
 import redis.asyncio.client
 import time
 import logging
+from database.async_crud import ban_user
+from database.async_database import session_scope
 
 def rate_limit(limit: int, key: str = None):
     """
@@ -18,7 +20,7 @@ def rate_limit(limit: int, key: str = None):
     return decorator
 
 class ThrottlingMiddleware(BaseMiddleware):
-    def __init__(self, redis: redis.asyncio.client.Redis, limit=0.5, key_prefix='antiflood_'):
+    def __init__(self, redis: redis.asyncio.client.Redis, limit=1.0, key_prefix='antiflood_'):
         self.rate_limit = limit
         self.prefix = key_prefix
         self.throttle_manager = ThrottleManager(redis=redis)
@@ -37,7 +39,7 @@ class ThrottlingMiddleware(BaseMiddleware):
         
         try:
             await self.check_forward(event)
-        except MessageForwarded:
+        except CancelHandler:
             return
 
 
@@ -64,9 +66,13 @@ class ThrottlingMiddleware(BaseMiddleware):
             await event.answer(f'Too many requests.\nTry again in {delta:.2f} seconds.')
 
     async def check_forward(self, event: Message) -> bool:
-        if bool(event.forward_from):
-            event.answer(f'Message forwarded. ')
-            raise MessageForwarded()
+        if bool(event.forward_from) and event.text in '/start, /register, /stats, /play':
+            await event.answer(f'Command message forwarded. Your account is banned.')
+
+            async with session_scope() as session:
+                await ban_user(session, event.from_user.id)
+            raise CancelHandler()
+        return False
 
 
 class ThrottleManager:
@@ -120,5 +126,3 @@ class Throttled(Exception):
 class CancelHandler(Exception):
     pass
 
-class MessageForwarded(Exception):
-    pass

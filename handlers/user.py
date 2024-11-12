@@ -1,6 +1,6 @@
 from aiogram import Router, types, html
 from aiogram.filters import Command, CommandStart
-from database.async_crud import set_user
+from database.async_crud import set_user, is_user_exists
 from database.async_database import session_scope
 from database.redis_cache import cache_user, get_all_users
 
@@ -26,7 +26,7 @@ def get_user_data(message: types.Message):
         "first_name": message.from_user.first_name,
         "last_name": message.from_user.last_name,
         "is_bot": message.from_user.is_bot,
-        "last_seen": message.date.isoformat(),
+        "last_seen": message.date.replace(microsecond=0), # add .isoformat() to put in redis
     }
 
 @user_router.message(CommandStart())
@@ -34,18 +34,31 @@ async def command_start_handler(message: types.Message) -> None:
     """
     This handler receives messages with `/start` command
     """
-    # async with session_scope() as session:
-    #     data = get_user_data(message)
-    #     await set_user(session, **data)
 
-    data = get_user_data(message)
-    await cache_user(**data)
+
+    # data = get_user_data(message)
+    # await cache_user(**data)
 
     await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
-    print(await get_all_users())
+    # print(await get_all_users())
 
 @user_router.message(Command('register'))
-    
+async def register_handler(message: types.Message):
+    """
+    This handler receives messages with `/register` command and
+    register user in DataBase 
+    """
+    async with session_scope() as session:
+        
+        if  await is_user_exists(session, message.from_user.id):
+            await message.answer(f"Dear, {html.bold(message.from_user.full_name)}, you already have account!")
+
+        else:
+            data = get_user_data(message)
+            await set_user(session, **data)
+            await message.answer(f"Congratulation, {html.bold(message.from_user.full_name)}, your account!")
+
+
 @user_router.message(Command("help"))
 async def user_help_handler(message: types.Message):
     await message.answer(USER_HELP_TEXT)
