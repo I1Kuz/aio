@@ -2,10 +2,11 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON, BigInte
 from .async_database import Base
 from services.share_utils import utcnow_without_microsec
 
-class TelegramUser(Base):
+class User(Base):
     """
     main columns:
-        user_id: Telegram user ID, BigInteger because its 64bit number.
+        user_id: Telegram user ID
+        email: email lol
         username: username in Telegram(@username)
         first_name: user first name
         last_name: user last name, this may be missing
@@ -23,10 +24,12 @@ class TelegramUser(Base):
     __tablename__ = 'telegram_users'
 
     user_id = Column(BigInteger, primary_key=True, )
+    email = Column(String, nullable=True)
     username = Column(String(50), unique=True, nullable=True)
     first_name = Column(String(100), nullable=True)
     last_name = Column(String(100), nullable=True)
     is_bot = Column(Boolean, default=False)
+    
 
     verified = Column(Boolean, default=False)
     banned_at = Column(DateTime, nullable=True)
