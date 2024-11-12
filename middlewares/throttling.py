@@ -34,9 +34,12 @@ class ThrottlingMiddleware(BaseMiddleware):
             await self.on_process_event(event, data)
         except CancelHandler:
             return
-
-        if await self.check_forward(event):
+        
+        try:
+            await self.check_forward(event)
+        except MessageForwarded:
             return
+
 
         try:
             result = await handler(event, data)
@@ -61,7 +64,9 @@ class ThrottlingMiddleware(BaseMiddleware):
             await event.answer(f'Too many requests.\nTry again in {delta:.2f} seconds.')
 
     async def check_forward(self, event: Message) -> bool:
-        return bool(event.forward_from)
+        if bool(event.forward_from):
+            event.answer(f'Message forwarded. ')
+            raise MessageForwarded()
 
 
 class ThrottleManager:
@@ -113,4 +118,7 @@ class Throttled(Exception):
                f"time delta: {round(self.delta, 3)} s)"
 
 class CancelHandler(Exception):
+    pass
+
+class MessageForwarded(Exception):
     pass
